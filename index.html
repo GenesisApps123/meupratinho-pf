@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Online - Delivery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        }
+
+        body{
+        background:#c40000;
+        font-family:'Poppins',sans-serif;
+        color:#333;
+        }
+
+        header{
+        text-align:center;
+        padding:20px 10px;
+        color:white;
+        }
+
+        .logo{
+        width:30%;
+        max-width:120px;
+        min-width:80px;
+        display:block;
+        margin:auto;
+        }
+
+        .subtitulo{
+        margin-top:10px;
+        font-family:'Baloo 2';
+        font-size:22px;
+        }
+
+        .container{
+        max-width:500px;
+        margin:auto;
+        padding:15px;
+        }
+
+        .card{
+        background:white;
+        padding:18px;
+        border-radius:20px;
+        margin-bottom:15px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        h2{
+        font-family:'Baloo 2';
+        margin-bottom:12px;
+        font-size:22px;
+        }
+
+        input,
+        select{
+        width:100%;
+        padding:15px;
+        border:1px solid #ddd;
+        border-radius:14px;
+        margin-bottom:10px;
+        font-size:16px;
+        outline:none;
+        background: #fafafa;
+        transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+        border-color: #c40000;
+        background: #fff;
+        }
+
+        .check{
+        display:flex;
+        align-items:center;
+        margin:12px 0;
+        font-size:17px;
+        cursor:pointer;
+        user-select: none;
+        }
+
+        .check input{
+        display:none;
+        }
+
+        .check span{
+        width:22px;
+        height:22px;
+        border-radius:50%;
+        border:2px solid #c40000;
+        margin-right:10px;
+        transition:0.2s;
+        display: inline-block;
+        flex-shrink: 0;
+        }
+
+        .check input:checked + span{
+        background:#c40000;
+        transform:scale(1.1);
+        }
+
+        /* Estilo checkbox em quadrado para acompanhamentos/adicionais opcionais se preferir, mantendo o visual redondinho padrão ou adaptado */
+        .check-square span {
+        border-radius: 6px !important;
+        }
+        .check input:checked + .square-box {
+        background:#c40000;
+        }
+
+        .total-box{
+        position:sticky;
+        bottom:0;
+        background:white;
+        padding:18px;
+        font-size:22px;
+        font-weight:bold;
+        border-radius:18px 18px 0 0;
+        text-align:center;
+        box-shadow:0 -4px 10px rgba(0,0,0,0.08);
+        z-index: 100;
+        }
+
+        button{
+        width:100%;
+        padding:18px;
+        background:#ffcc00;
+        border:none;
+        border-radius:16px;
+        font-size:20px;
+        font-weight:bold;
+        cursor:pointer;
+        transition:0.2s;
+        margin-top:12px;
+        }
+
+        button:active{
+        transform:scale(0.98);
+        }
+
+        .obs{
+        font-size:14px;
+        color:#777;
+        margin-top:8px;
+        }
+
+        .erro{
+        color:#ffd5d5;
+        font-size:13px;
+        display:block;
+        margin-bottom:8px;
+        }
+
+        .input-erro{
+        border:2px solid #ff4d4d !important;
+        animation:tremer 0.2s 2;
+        }
+
+        .tipo-card{
+        background:#fff5f5;
+        border:3px solid transparent;
+        padding:18px;
+        border-radius:18px;
+        margin-top:12px;
+        cursor:pointer;
+        transition:0.2s;
+        }
+
+        .tipo-card h3{
+        font-size:20px;
+        margin-bottom:6px;
+        }
+
+        .tipo-card p{
+        margin-bottom:8px;
+        color:#555;
+        font-size: 15px;
+        }
+
+        .tipo-card.ativo{
+        border:3px solid #ffcc00;
+        background:#fff0c2;
+        transform:scale(1.02);
+        }
+
+        input:disabled + span{
+        opacity:0.3;
+        }
+
+        @keyframes tremer{
+        0%{transform:translateX(0);}
+        25%{transform:translateX(-4px);}
+        50%{transform:translateX(4px);}
+        75%{transform:translateX(-4px);}
+        100%{transform:translateX(0);}
+        }
+
+        @media(max-width:500px){
+        .check{
+        font-size:16px;
+        }
+        button{
+        font-size:18px;
+        }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="subtitulo">Faça o seu pedido online!</div>
+    </header>
+
+    <div class="container">
+        <form id="pedidoForm" onsubmit="enviarPedido(event)">
+            
+            <!-- Dados do Cliente -->
+            <div class="card">
+                <h2>Seus Dados</h2>
+                <label class="obs" for="nome">Nome completo *</label>
+                <input type="text" id="nome" placeholder="Digite seu nome" required>
+                
+                <label class="obs" for="endereco">Endereço de entrega *</label>
+                <input type="text" id="endereco" placeholder="Rua, número, bairro..." required>
+            </div>
+
+            <!-- Escolha do Prato Principal -->
+            <div class="card">
+                <h2>Escolha o Prato Principal</h2>
+                <div class="obs" style="margin-bottom: 10px;">Selecione uma opção (Base: R$ 25,00):</div>
+                
+                <div class="tipo-card" onclick="selecionarPrato('Filé ao Molho Madeira', 25.0, this)">
+                    <h3>Filé ao Molho Madeira</h3>
+                    <p>Carne suculenta com molho madeira especial.</p>
+                </div>
+
+                <div class="tipo-card" onclick="selecionarPrato('Frango Barbecue', 22.0, this)">
+                    <h3>Frango Barbecue</h3>
+                    <p>Frango grelhado ao molho barbecue defumado.</p>
+                </div>
+
+                <div class="tipo-card" onclick="selecionarPrato('Feijoada', 28.0, this)">
+                    <h3>Feijoada</h3>
+                    <p>Tradicional feijoada completa com carnes selecionadas.</p>
+                </div>
+                <input type="hidden" id="pratoSelecionado" required>
+            </div>
+
+            <!-- Quantidade de Pratos -->
+            <div class="card">
+                <h2>Quantidade de Pratos</h2>
+                <input type="number" id="quantidade" value="1" min="1" max="10" oninput="calcularTotal()">
+            </div>
+
+            <!-- Acompanhamentos (Até 5 opções inclusas) -->
+            <div class="card">
+                <h2>Acompanhamentos</h2>
+                <p class="obs">Escolha os acompanhamentos desejados:</p>
+                
+                <label class="check">
+                    <input type="checkbox" name="acompanhamento" value="Arroz branco" onchange="calcularTotal()">
+                    <span class="square-box"></span> Arroz branco
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="acompanhamento" value="Farofa" onchange="calcularTotal()">
+                    <span class="square-box"></span> Farofa
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="acompanhamento" value="Salada" onchange="calcularTotal()">
+                    <span class="square-box"></span> Salada
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="acompanhamento" value="Macarrão" onchange="calcularTotal()">
+                    <span class="square-box"></span> Macarrão
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="acompanhamento" value="Chips de macaxeira" onchange="calcularTotal()">
+                    <span class="square-box"></span> Chips de macaxeira
+                </label>
+            </div>
+
+            <!-- Adicionais (R$ 3,99 cada) -->
+            <div class="card">
+                <h2>Adicionais <span style="font-size: 15px; color: #777;">(R$ 3,99 un.)</span></h2>
+                
+                <label class="check">
+                    <input type="checkbox" name="adicional" value="Calabresa" data-preco="3.99" onchange="calcularTotal()">
+                    <span class="square-box"></span> Calabresa
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="adicional" value="Ovo frito" data-preco="3.99" onchange="calcularTotal()">
+                    <span class="square-box"></span> Ovo frito
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="adicional" value="Queijo frito" data-preco="3.99" onchange="calcularTotal()">
+                    <span class="square-box"></span> Queijo frito
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="adicional" value="Batata frita" data-preco="3.99" onchange="calcularTotal()">
+                    <span class="square-box"></span> Batata frita
+                </label>
+            </div>
+
+            <!-- Refrigerante -->
+            <div class="card">
+                <h2>Refrigerante</h2>
+                <select id="refrigerante" onchange="calcularTotal()">
+                    <option value="" data-preco="0">Nenhum refrigerante</option>
+                    <option value="Lata" data-preco="5.99">Lata (R$ 5,99)</option>
+                    <option value="1 Litro" data-preco="10.99">1 Litro (R$ 10,99)</option>
+                    <option value="2 Litros" data-preco="15.99">2 Litros (R$ 15,99)</option>
+                </select>
+            </div>
+
+            <!-- Forma de Pagamento -->
+            <div class="card">
+                <h2>Forma de Pagamento</h2>
+                <select id="pagamento" required>
+                    <option value="">Selecione a forma de pagamento</option>
+                    <option value="Pix">Pix</option>
+                    <option value="Dinheiro">Dinheiro</option>
+                    <option value="Cartão">Cartão</option>
+                </select>
+            </div>
+
+            <!-- Caixa Fixa de Total e Botão -->
+            <div class="total-box">
+                Total: <span id="valorTotal">R$ 0,00</span>
+                <button type="submit">Finalizar Pedido no WhatsApp</button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        let precoPratoAtual = 0;
+        let nomePratoAtual = "";
+
+        function selecionarPrato(nome, preco, elemento) {
+            // Remove a classe ativo de todos os cards de prato
+            document.querySelectorAll('.tipo-card').forEach(card => {
+                card.classList.remove('ativo');
+            });
+            // Adiciona no clicado
+            elemento.classList.add('ativo');
+            
+            precoPratoAtual = preco;
+            nomePratoAtual = nome;
+            document.getElementById('pratoSelecionado').value = nome;
+            
+            calcularTotal();
+        }
+
+        function calcularTotal() {
+            let qtd = parseInt(document.getElementById('quantidade').value) || 1;
+            let subtotalPrato = precoPratoAtual * qtd;
+
+            // Somar adicionais
+            let totalAdicionais = 0;
+            document.querySelectorAll('input[name="adicional"]:checked').forEach(el => {
+                totalAdicionais += parseFloat(el.getAttribute('data-preco')) * qtd;
+            });
+
+            // Somar refrigerante
+            let selectRefri = document.getElementById('refrigerante');
+            let optionRefri = selectRefri.options[selectRefri.selectedIndex];
+            let precoRefri = optionRefri ? parseFloat(optionRefri.getAttribute('data-preco')) || 0 : 0;
+
+            let totalGeral = subtotalPrato + totalAdicionais + precoRefri;
+
+            document.getElementById('valorTotal').innerText = totalGeral.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
+
+        function enviarPedido(event) {
+            event.preventDefault();
+
+            let nome = document.getElementById('nome').value.trim();
+            let endereco = document.getElementById('endereco').value.trim();
+            let prato = document.getElementById('pratoSelecionado').value;
+            let pagamento = document.getElementById('pagamento').value;
+
+            if (!nome || !endereco) {
+                alert('Por favor, preencha seu nome e endereço.');
+                return;
+            }
+
+            if (!prato) {
+                alert('Por favor, escolha um prato principal.');
+                return;
+            }
+
+            if (!pagamento) {
+                alert('Por favor, selecione a forma de pagamento.');
+                return;
+            }
+
+            let qtd = document.getElementById('quantidade').value;
+            
+            // Coletar acompanhamentos
+            let acompanhamentos = [];
+            document.querySelectorAll('input[name="acompanhamento"]:checked').forEach(el => {
+                acompanhamentos.push(el.value);
+            });
+
+            // Coletar adicionais
+            let adicionais = [];
+            document.querySelectorAll('input[name="adicional"]:checked').forEach(el => {
+                adicionais.push(el.value);
+            });
+
+            let selectRefri = document.getElementById('refrigerante');
+            let refriTexto = selectRefri.value ? selectRefri.options[selectRefri.selectedIndex].text : 'Nenhum';
+            let valorTotalTexto = document.getElementById('valorTotal').innerText;
+
+            // Montar mensagem para o WhatsApp
+            let mensagem = `*NOVO PEDIDO - DELIVERY*%0A%0A` +
+                           `*Cliente:* ${nome}%0A` +
+                           `*Endereço:* ${endereco}%0A%0A` +
+                           `*Prato:* ${prato} (Qtd: ${qtd})%0A` +
+                           `*Acompanhamentos:* ${acompanhamentos.length > 0 ? acompanhamentos.join(', ') : 'Nenhum'}%0A` +
+                           `*Adicionais:* ${adicionais.length > 0 ? adicionais.join(', ') : 'Nenhum'}%0A` +
+                           `*Refrigerante:* ${refriTexto}%0A` +
+                           `*Forma de Pagamento:* ${pagamento}%0A%0A` +
+                           `*Valor Total:* ${valorTotalTexto}`;
+
+          
+            let numeroWhatsApp = "5588996444527"; 
+            let urlWhatsApp = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${mensagem}`;
+
+            window.open(urlWhatsApp, '_blank');
+        }
+    </script>
+</body>
+</html>
